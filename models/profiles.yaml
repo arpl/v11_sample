@@ -40,13 +40,21 @@ models:
 var_groups:
   - name: user_all_vars
     entity_key: users
-    time_grain: "day"
     vars:
       # - entity_var:
       #     name: id_type_email_count_daily
       #     from: models/id_graph_users
       #     select: sum(case when other_id_type = 'email' then 1 else 0 end)
-
+      #
+      - entity_var:
+          name: user_email
+          from: inputs/rsIdentifies
+          select: first_value(email)
+          where: email is not null and email != ''
+          window:
+            order_by:
+              - timestamp desc
+            frame_clause: rows between unbounded preceding and unbounded following
   - name: user_known_weekly_vars
     entity_cohort: models/knownUsers
     time_grain: "week"
