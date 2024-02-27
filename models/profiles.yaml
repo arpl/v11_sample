@@ -22,7 +22,7 @@ models:
       filter_pipeline:
         # exclude ids which don't have any other_id_type of email
         - type: exclude
-          value: "{{ users.Var('id_type_email_count_daily') }} = 0"
+          value: "{{ users.Var('user_email') }} != ''"
 
   - name: user_profiles
     model_type: feature_table_model
@@ -42,10 +42,10 @@ var_groups:
     entity_key: users
     time_grain: "day"
     vars:
-      - entity_var:
-          name: id_type_email_count_daily
-          from: models/id_graph_users
-          select: sum(case when other_id_type = 'email' then 1 else 0 end)
+      # - entity_var:
+      #     name: id_type_email_count_daily
+      #     from: models/id_graph_users
+      #     select: sum(case when other_id_type = 'email' then 1 else 0 end)
 
   - name: user_known_weekly_vars
     entity_cohort: models/knownUsers
