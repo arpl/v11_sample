@@ -1,0 +1,61 @@
+models:
+  - name: marketing_pages
+    model_type: sql_template
+    model_spec:
+      validity_time: 24h
+      materialization:
+        output_type: ephemeral
+        run_type: discrete
+      single_sql: |
+        {% with pages = this.DeRef("inputs/rsPages") %}
+          select * from {{pages}} where context_campaign_source = 'mktemail'
+        {% endwith %}
+      ids:
+        - select: user_id
+          type: user_id
+          entity: users
+        - select: anonymous_id
+          type: anonymous_id
+          entity: users
+        - select: context_session_id
+          type: session_id
+          entity: users
+      contract:
+        is_optional: false
+        is_event_stream: false
+        with_entity_ids:
+          - users
+        with_columns:
+          - name: user_id
+          - name: anonymous_id
+          - name: context_session_id
+  - name: session_activity
+    model_type: sql_template
+    model_spec:
+      validity_time: 24h
+      materialization:
+        output_type: ephemeral
+        run_type: discrete
+      single_sql: |
+        {% with tracks = this.DeRef("inputs/rsTracks") %}
+          select  * from {{ tracks }} where context_session_id != ''
+        {% endwith %}
+      ids:
+        - select: user_id
+          type: user_id
+          entity: users
+        - select: anonymous_id
+          type: anonymous_id
+          entity: users
+        - select: context_session_id
+          type: session_id
+          entity: users
+      contract:
+        is_optional: false
+        is_event_stream: false
+        with_entity_ids:
+          - users
+        with_columns:
+          - name: user_id
+          - name: anonymous_id
+          - name: context_session_id
