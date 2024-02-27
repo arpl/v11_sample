@@ -4,7 +4,6 @@ models:
     model_spec:
       validity_time: 24h # 1 day
       entity_key: users
-      time_grain: "hour"
       materialization:
         run_type: incremental
       edge_sources:
@@ -16,23 +15,20 @@ models:
     model_type: entity_cohort
     model_spec:
       extends: users/all
-      time_grain: "day"
       materialization:
         output_type: table
       filter_pipeline:
         # exclude ids which don't have any other_id_type of email
-        - type: exclude
+        - type: include
           value: "{{ users.Var('user_email') }} != ''"
 
   - name: user_profiles
     model_type: feature_table_model
     model_spec:
       validity_time: 24h # 1 day
-      time_grain: "day"
       entity_cohort: models/knownUsers
       features:
-        - first_activity_time_weekly
-        - first_activity_time_daily_mixed
+        - first_activity_time_daily
         - last_session_activity_time_daily
         - campaign_name_daily
         - campaign_medium_daily
@@ -41,11 +37,6 @@ var_groups:
   - name: user_all_vars
     entity_key: users
     vars:
-      # - entity_var:
-      #     name: id_type_email_count_daily
-      #     from: models/id_graph_users
-      #     select: sum(case when other_id_type = 'email' then 1 else 0 end)
-      #
       - entity_var:
           name: user_email
           from: inputs/rsIdentifies
@@ -55,29 +46,14 @@ var_groups:
             order_by:
               - timestamp desc
             frame_clause: rows between unbounded preceding and unbounded following
-  - name: user_known_weekly_vars
-    entity_cohort: models/knownUsers
-    time_grain: "week"
-    vars:
-      - entity_var:
-          name: first_activity_time_weekly
-          select: min(timestamp)
-          from: inputs/rsPages # min timestamp from another table
-          description: First Activity Time
 
   - name: user_known_daily_vars
     entity_cohort: models/knownUsers
-    time_grain: "day"
     vars:
       - entity_var:
           name: first_activity_time_daily
           select: min(timestamp)
           from: inputs/rsTracks
-          description: First Activity Time
-          is_feature: False
-      - entity_var:
-          name: first_activity_time_daily_mixed
-          select: least({{users.Var("first_activity_time_daily")}}, {{users.Var("first_activity_time_weekly")}})
           description: First Activity Time
       - entity_var:
           name: last_session_activity_time_daily
