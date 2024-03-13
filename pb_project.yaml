@@ -7,10 +7,6 @@ entities:
   - name: users
     serve_traits:
       - id_served: user_id
-      - id_served: anonymous_id
-      - id_served: email
-      - id_served: cart_token
-      - id_served: user_main_id
     id_stitcher: models/id_graph_users
     id_column_name: profile_id
     id_types:
