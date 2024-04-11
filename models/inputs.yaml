@@ -12,7 +12,7 @@ inputs:
         - name: anonymous_id
         - name: email
     app_defaults:
-      table: RUDDERSTACK_TEST_DB.ARIS_P_EVENTS.IDENTIFIES
+      table: RUDDERSTACK_TEST_DB.SAMPLE_SHOPIFY_DATA.IDENTIFIES
       occurred_at_col: timestamp
       ids:
         - select: user_id
@@ -37,7 +37,7 @@ inputs:
         - name: anonymous_id
         - name: context_session_id
     app_defaults:
-      table: RUDDERSTACK_TEST_DB.ARIS_P_EVENTS.TRACKS
+      table: RUDDERSTACK_TEST_DB.SAMPLE_SHOPIFY_DATA.TRACKS
       occurred_at_col: timestamp
       ids:
         - select: user_id
@@ -62,7 +62,7 @@ inputs:
         - name: anonymous_id
         - name: context_session_id
     app_defaults:
-      table: RUDDERSTACK_TEST_DB.ARIS_P_EVENTS.PAGES
+      table: RUDDERSTACK_TEST_DB.SAMPLE_SHOPIFY_DATA.PAGES
       occurred_at_col: timestamp
       ids:
         - select: user_id
